@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { database, ref, onValue } from './firebase';
+import { database, ref, onValue } from '../firebase';
 import './App.css';
 
 function App() {
