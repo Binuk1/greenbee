@@ -112,7 +112,7 @@ function App() {
           <div className="card-header">
             <h2>💧 Soil Moisture</h2>
             <span className={`status ${sensorData.needs_watering ? 'low' : 'good'}`}>
-              {sensorData.needs_watering ? 'NEEDS WATER' : 'OK'}
+              {sensorData.needs_watering ? 'DRY' : 'OK'}
             </span>
           </div>
           <div className="card-content">
@@ -135,7 +135,7 @@ function App() {
           <div className="card-header">
             <h2>☀️ Light Level</h2>
             <span className={`status ${lightPercentage < 20 ? 'low' : 'good'}`}>
-              {lightPercentage < 20 ? 'LOW LIGHT' : 'GOOD'}
+              {lightPercentage > 50 ? 'POOR' : 'GOOD'}
             </span>
           </div>
           <div className="card-content">
