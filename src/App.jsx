@@ -6,10 +6,14 @@ function App() {
   const [sensorData, setSensorData] = useState({
     moisture: 0,
     light: 0,
+    temperature: 0,
+    humidity: 0,
     pump_active: false,
     needs_watering: false,
     timestamp: 0,
-    wifi_strength: 0
+    wifi_strength: 0,
+    dht_error: false,
+    dht_error_count: 0
   });
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(new Date());
@@ -23,10 +27,14 @@ function App() {
         setSensorData({
           moisture: data.moisture || 0,
           light: data.light || 0,
+          temperature: data.temperature || 0,
+          humidity: data.humidity || 0,
           pump_active: data.pump_active || false,
           needs_watering: data.needs_watering || false,
           timestamp: data.timestamp || 0,
-          wifi_strength: data.wifi_strength || 0
+          wifi_strength: data.wifi_strength || 0,
+          dht_error: data.dht_error || false,
+          dht_error_count: data.dht_error_count || 0
         });
         setLastUpdated(new Date());
       }
@@ -66,7 +74,21 @@ function App() {
     return { quality: 'Poor', level: 10 };
   };
 
+  const getTemperatureStatus = (temp) => {
+    if (temp < 15) return { status: 'COLD', class: 'cold' };
+    if (temp > 30) return { status: 'HOT', class: 'hot' };
+    return { status: 'GOOD', class: 'good' };
+  };
+
+  const getHumidityStatus = (humidity) => {
+    if (humidity < 30) return { status: 'LOW', class: 'low' };
+    if (humidity > 70) return { status: 'HIGH', class: 'high' };
+    return { status: 'GOOD', class: 'good' };
+  };
+
   const wifiInfo = getWifiQuality(sensorData.wifi_strength);
+  const tempInfo = getTemperatureStatus(sensorData.temperature);
+  const humidityInfo = getHumidityStatus(sensorData.humidity);
 
   if (loading) {
     return (
@@ -128,6 +150,83 @@ function App() {
           </div>
         </div>
 
+        {/* Temperature Card */}
+        <div className="card temperature-card">
+          <div className="card-header">
+            <h2>🌡️ Temperature</h2>
+            <span className={`status ${tempInfo.class}`}>
+              {sensorData.dht_error ? 'ERROR' : tempInfo.status}
+            </span>
+          </div>
+          <div className="card-content">
+            {sensorData.dht_error ? (
+              <div className="sensor-error">
+                <div className="error-icon">❌</div>
+                <div className="error-message">
+                  DHT Sensor Error
+                  <small>Count: {sensorData.dht_error_count}</small>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="value">{sensorData.temperature.toFixed(1)}°C</div>
+                <div className="temperature-gauge">
+                  <div className="gauge-background">
+                    <div 
+                      className="gauge-fill"
+                      style={{ 
+                        width: `${Math.min(100, Math.max(0, (sensorData.temperature / 40) * 100))}%` 
+                      }}
+                    ></div>
+                  </div>
+                  <div className="gauge-labels">
+                    <span>0°C</span>
+                    <span>20°C</span>
+                    <span>40°C</span>
+                  </div>
+                </div>
+                <div className="range-info">
+                  Ideal: 15°C - 30°C
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Humidity Card */}
+        <div className="card humidity-card">
+          <div className="card-header">
+            <h2>💦 Air Humidity</h2>
+            <span className={`status ${humidityInfo.class}`}>
+              {sensorData.dht_error ? 'ERROR' : humidityInfo.status}
+            </span>
+          </div>
+          <div className="card-content">
+            {sensorData.dht_error ? (
+              <div className="sensor-error">
+                <div className="error-icon">❌</div>
+                <div className="error-message">
+                  DHT Sensor Error
+                  <small>Count: {sensorData.dht_error_count}</small>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="value">{sensorData.humidity.toFixed(1)}%</div>
+                <div className="percentage-bar">
+                  <div 
+                    className="percentage-fill"
+                    style={{ width: `${sensorData.humidity}%` }}
+                  ></div>
+                </div>
+                <div className="range-info">
+                  Ideal: 30% - 70%
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
         {/* Pump Status Card */}
         <div className="card pump-card">
           <div className="card-header">
@@ -165,6 +264,12 @@ function App() {
                   style={{ width: `${wifiInfo.level}%` }}
                 ></div>
               </div>
+            </div>
+            <div className="status-item">
+              <span className="label">DHT Sensor:</span>
+              <span className={`value ${sensorData.dht_error ? 'error' : 'good'}`}>
+                {sensorData.dht_error ? `ERROR (${sensorData.dht_error_count})` : 'HEALTHY'}
+              </span>
             </div>
             <div className="status-item">
               <span className="label">Last Sensor Update:</span>

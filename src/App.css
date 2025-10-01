@@ -378,3 +378,120 @@ body {
   0% { left: -100%; }
   100% { left: 100%; }
 }
+.temperature-card .gauge-background {
+  background: #e0e0e0;
+  height: 20px;
+  border-radius: 10px;
+  margin: 10px 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.temperature-card .gauge-fill {
+  background: linear-gradient(90deg, #4fc3f7, #ff9800, #f44336);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.temperature-card .gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8em;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Humidity Card Styles */
+.humidity-card .percentage-bar {
+  background: #e0e0e0;
+  height: 20px;
+  border-radius: 10px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.humidity-card .percentage-fill {
+  background: linear-gradient(90deg, #4caf50, #8bc34a, #cddc39);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+/* Status Colors for Temperature and Humidity */
+.status.cold { background: #2196f3; color: white; }
+.status.hot { background: #ff5722; color: white; }
+.status.high { background: #ff9800; color: white; }
+
+/* Sensor Error Styles */
+.sensor-error {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.error-icon {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.error-message {
+  color: #f44336;
+}
+
+.error-message small {
+  display: block;
+  margin-top: 5px;
+  color: #666;
+}
+
+/* Range Info */
+.range-info {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* Responsive Grid Update */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Status item alignment */
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.status-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.status-item .label {
+  font-weight: 500;
+  color: #555;
+}
+
+.status-item .value {
+  font-weight: 600;
+}
+
+.status-item .value.error {
+  color: #f44336;
+}
+
+.status-item .value.warning {
+  color: #ff9800;
+}
+
+.status-item .value.good {
+  color: #4caf50;
+}
