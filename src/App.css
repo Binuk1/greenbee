@@ -1,0 +1,497 @@
+/* src/App.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  color: #333;
+}
+
+.app {
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: white;
+  text-align: center;
+}
+
+.loading h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.header {
+  text-align: center;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-header h2 {
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.status.good {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status.low {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.status.active {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.status.inactive {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+.card-content {
+  text-align: center;
+}
+
+.value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #667eea;
+}
+
+.percentage-bar {
+  width: 100%;
+  height: 20px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  margin: 15px 0;
+  overflow: hidden;
+}
+
+.percentage-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.percentage {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #666;
+}
+
+.pump-icon {
+  font-size: 3rem;
+  margin: 10px 0;
+  transition: all 0.3s ease;
+}
+
+.pump-icon.active {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* New System Card Styles */
+.system-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.system-card .card-header h2 {
+  color: white;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.status-item .label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  flex: 1;
+}
+
+.status-item .value {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin: 0;
+  flex: 1;
+  text-align: right;
+}
+
+.status-item .value.warning {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.status-item .value.good {
+  color: #51cf66;
+  font-weight: bold;
+}
+
+.wifi-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+.wifi-strength {
+  height: 100%;
+  background: #51cf66;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* New Threshold Info Styles */
+.threshold-info {
+  font-size: 0.8em;
+  color: rgba(0, 0, 0, 0.7);
+  margin-top: 8px;
+  text-align: center;
+  padding: 5px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+}
+
+.system-card .threshold-info {
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Watering Status Styles */
+.watering-status {
+  font-size: 0.9em;
+  color: #ffd43b;
+  margin-top: 5px;
+  font-style: italic;
+  min-height: 1.2em;
+}
+
+.system-card .watering-status {
+  color: #ffd43b;
+}
+
+/* Card-specific background colors */
+.moisture-card {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.moisture-card .card-header h2,
+.moisture-card .value,
+.moisture-card .percentage {
+  color: white;
+}
+
+.moisture-card .percentage-bar {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.moisture-card .percentage-fill {
+  background: linear-gradient(90deg, #ffffff, #e0f7fa);
+}
+
+.light-card {
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  color: white;
+}
+
+.light-card .card-header h2,
+.light-card .value,
+.light-card .percentage {
+  color: white;
+}
+
+.light-card .percentage-bar {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.light-card .percentage-fill {
+  background: linear-gradient(90deg, #ffffff, #fff9c4);
+}
+
+.pump-card {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.pump-card .card-header h2 {
+  color: #333;
+}
+
+.data-card {
+  background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+}
+
+.data-card pre {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+}
+
+.footer {
+  text-align: center;
+  color: white;
+  margin-top: 2rem;
+  opacity: 0.8;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .status-item {
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+  }
+  
+  .status-item .value {
+    text-align: center;
+  }
+}
+
+/* Animation for value updates */
+.value-update {
+  animation: highlight 0.5s ease;
+}
+
+@keyframes highlight {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Loading animation for cards */
+.card.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.card.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+.temperature-card .gauge-background {
+  background: #e0e0e0;
+  height: 20px;
+  border-radius: 10px;
+  margin: 10px 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.temperature-card .gauge-fill {
+  background: linear-gradient(90deg, #4fc3f7, #ff9800, #f44336);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.temperature-card .gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8em;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Humidity Card Styles */
+.humidity-card .percentage-bar {
+  background: #e0e0e0;
+  height: 20px;
+  border-radius: 10px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.humidity-card .percentage-fill {
+  background: linear-gradient(90deg, #4caf50, #8bc34a, #cddc39);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+/* Status Colors for Temperature and Humidity */
+.status.cold { background: #2196f3; color: white; }
+.status.hot { background: #ff5722; color: white; }
+.status.high { background: #ff9800; color: white; }
+
+/* Sensor Error Styles */
+.sensor-error {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.error-icon {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.error-message {
+  color: #f44336;
+}
+
+.error-message small {
+  display: block;
+  margin-top: 5px;
+  color: #666;
+}
+
+/* Range Info */
+.range-info {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* Responsive Grid Update */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Status item alignment */
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.status-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.status-item .label {
+  font-weight: 500;
+  color: #555;
+}
+
+.status-item .value {
+  font-weight: 600;
+}
+
+.status-item .value.error {
+  color: #f44336;
+}
+
+.status-item .value.warning {
+  color: #ff9800;
+}
+
+.status-item .value.good {
+  color: #4caf50;
+}
