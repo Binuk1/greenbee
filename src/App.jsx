@@ -1,6 +1,33 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { database, ref, onValue } from '../firebase';
 import './App.css';
+import Graphs from './components/Graphs';
+
+const generateFakeData = () => {
+  // Generate random values within realistic ranges
+  const moisture = Math.floor(1500 + Math.random() * 2000); // 1500-3500
+  const light = Math.floor(Math.random() * 4095); // 0-4095
+  const temperature = (Math.random() * 30 + 15).toFixed(1); // 15-45°C
+  const humidity = Math.floor(Math.random() * 50 + 30); // 30-80%
+  const timestamp = Math.floor(Date.now() / 1000) - Math.floor(Math.random() * 3600); // Within last hour
+  const wifi_strength = -Math.floor(Math.random() * 40 + 40); // -40 to -80 dBm
+  const dht_error = Math.random() > 0.9; // 10% chance of error
+  
+  return {
+    moisture,
+    light,
+    temperature: parseFloat(temperature),
+    humidity,
+    pump_active: false,
+    needs_watering: moisture > 2500,
+    timestamp,
+    wifi_strength,
+    dht_error,
+    dht_error_count: dht_error ? Math.floor(Math.random() * 5) : 0,
+    isFakeData: true
+  };
+};
 
 function App() {
   const [sensorData, setSensorData] = useState({
@@ -19,29 +46,88 @@ function App() {
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
   useEffect(() => {
+    let fakeDataInterval;
+    let isMounted = true;
+    
+    // Set up Firebase listener
     const sensorRef = ref(database, 'sensors/current');
     
     const unsubscribe = onValue(sensorRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        setSensorData({
-          moisture: data.moisture || 0,
-          light: data.light || 0,
-          temperature: data.temperature || 0,
-          humidity: data.humidity || 0,
-          pump_active: data.pump_active || false,
-          needs_watering: data.needs_watering || false,
-          timestamp: data.timestamp || 0,
-          wifi_strength: data.wifi_strength || 0,
-          dht_error: data.dht_error || false,
-          dht_error_count: data.dht_error_count || 0
-        });
+        if (isMounted) {
+          setSensorData({
+            moisture: data.moisture || 0,
+            light: data.light || 0,
+            temperature: data.temperature || 0,
+            humidity: data.humidity || 0,
+            pump_active: data.pump_active || false,
+            needs_watering: data.needs_watering || false,
+            timestamp: data.timestamp || 0,
+            wifi_strength: data.wifi_strength || 0,
+            dht_error: data.dht_error || false,
+            dht_error_count: data.dht_error_count || 0,
+            isFakeData: false
+          });
+          setLastUpdated(new Date());
+          setLoading(false);
+          
+          // Clear fake data interval if it exists
+          if (fakeDataInterval) {
+            clearInterval(fakeDataInterval);
+          }
+        }
+      } else if (isMounted) {
+        // If no data from Firebase, use fake data
+        setSensorData(prevData => ({
+          ...generateFakeData(),
+          // Keep the original data if it exists and is fake
+          ...(prevData.isFakeData ? {} : { isFakeData: true })
+        }));
         setLastUpdated(new Date());
+        setLoading(false);
       }
-      setLoading(false);
+    }, (error) => {
+      console.error('Firebase error:', error);
+      if (isMounted) {
+        // If there's an error with Firebase, use fake data
+        setSensorData(prevData => ({
+          ...generateFakeData(),
+          isFakeData: true
+        }));
+        setLastUpdated(new Date());
+        setLoading(false);
+      }
     });
 
-    return () => unsubscribe();
+    // Set up interval to update fake data every 10 seconds if we don't have real data
+    fakeDataInterval = setInterval(() => {
+      if (isMounted && sensorData.isFakeData) {
+        setSensorData(prevData => ({
+          ...generateFakeData(),
+          isFakeData: true
+        }));
+        setLastUpdated(new Date());
+      }
+    }, 10000);
+
+    // Initial load with fake data if Firebase is slow to respond
+    const timeoutId = setTimeout(() => {
+      if (isMounted && loading) {
+        setSensorData(prevData => ({
+          ...generateFakeData(),
+          isFakeData: true
+        }));
+        setLastUpdated(new Date());
+      }
+    }, 2000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(fakeDataInterval);
+      clearTimeout(timeoutId);
+      unsubscribe();
+    };
   }, []);
 
   // FIXED: Correct timestamp conversion
@@ -99,12 +185,31 @@ function App() {
     );
   }
 
-  return (
-    <div className="app">
+  // Navigation component for the header
+  const Navigation = () => {
+    const location = useLocation();
+    const isGraphsPage = location.pathname === '/graphs';
+    
+    return (
       <header className="header">
         <h1>🌿 GreenBee Plant Monitor</h1>
-        <p>Real-time plant monitoring dashboard</p>
+        <p>
+          {isGraphsPage ? 'Sensor Data Visualization' : 'Real-time plant monitoring dashboard'}
+          {sensorData.isFakeData && <span className="fake-data-badge">DEMO MODE</span>}
+        </p>
+        {!isGraphsPage && (
+          <Link to="/graphs" className="view-graphs-btn">
+            View Graphs 📈
+          </Link>
+        )}
       </header>
+    );
+  };
+
+  // Main Dashboard Component
+  const Dashboard = () => (
+    <div className="app">
+      <Navigation />
 
       <div className="dashboard">
         {/* Moisture Card */}
@@ -311,7 +416,25 @@ function App() {
       </footer>
     </div>
   );
-}
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route 
+          path="/graphs" 
+          element={
+            <Graphs 
+              sensorData={sensorData} 
+              lastUpdated={lastUpdated} 
+              isFakeData={sensorData.isFakeData} 
+            />
+          } 
+        />
+      </Routes>
+    </Router>
+  );
+};
 
 // Helper function to format uptime
 const formatUptime = (seconds) => {
