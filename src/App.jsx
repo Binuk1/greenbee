@@ -149,7 +149,7 @@ function App() {
     return updateTime.toLocaleTimeString();
   };
 
-  const moisturePercentage = Math.min(100, Math.max(0, (sensorData.moisture - 1500) / (3500 - 1500) * 100));
+  const moisturePercentage = Math.min(100, Math.max(0, (4095 - sensorData.moisture) / 4095 * 100));
   const lightPercentage = Math.min(100, Math.max(0, sensorData.light / 4095 * 100));
 
   const getWifiQuality = (rssi) => {
@@ -230,7 +230,7 @@ function App() {
             </div>
             <div className="percentage">{moisturePercentage.toFixed(1)}%</div>
             <div className="threshold-info">
-              Threshold: 2000 | Current: {sensorData.moisture}
+              Threshold: 1000 | Current: {sensorData.moisture}
             </div>
           </div>
         </div>
